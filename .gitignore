@@ -1,0 +1,16 @@
+# Private materials
+_private/
+
+# Build outputs
+**/target/
+**/*.class
+*.log
+
+# Local tool/editor files
+**/.claude/
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# Packaged submissions
+*.zip
