@@ -9,7 +9,8 @@
 - `lab1/`：Lab 1 历史快照
 - `lab2/`：Lab 2 历史快照 / 参考实现
 - `lab3/`：Lab 3 历史快照 / 参考实现
-- `lab4/`：Lab 4 当前项目，代码实现已完成
+- `lab4/`：Lab 4 历史快照 / 参考实现
+- `lab5/`：Lab 5 已完成项目
 - `_private/`：私有实验报告、提交压缩包、日志等，不纳入 Git
 - `SPEC.md`：仓库级开发规范
 - `.gitignore`：忽略私有文件和构建产物
@@ -26,34 +27,40 @@ Lab 2 在 Lab 1 基础上实现完整 Othello / Reversi 规则和多棋盘能力
 
 ### Lab 3
 
-Lab 3 将项目演进为多游戏平台，支持 `peace` 和 `reversi` 两种模式、动态新增游戏和多 session 切换，作为 Lab 4 的参考实现保留。
+Lab 3 将项目演进为多游戏平台，支持 `peace` 和 `reversi` 两种模式、动态新增游戏和多 session 切换，作为后续实验参考实现保留。
 
 ### Lab 4
 
-Lab 4 代码实现已完成，位于 `lab4/`。
+Lab 4 在 Lab 3 平台基础上新增 `minesweeper`，并保留 `peace`、`reversi`、多 session 管理、动态新增、切换保状态和左 / 中 / 右布局。Lab 4 已完成，作为 Lab 5 的参考基础保留。
+
+### Lab 5
+
+Lab 5 代码实现已完成，位于 `lab5/`。
 
 已实现内容：
 
-- 启动默认三局：
+- 启动默认四局：
   - Game 1 = `peace`
   - Game 2 = `reversi`
   - Game 3 = `minesweeper`
+  - Game 4 = `chess`
 - 默认进入 Game 1
-- 支持运行时新增 `peace`、`reversi`、`minesweeper`
+- 保留 Lab 4 的 `peace`、`reversi`、`minesweeper` 行为
+- 支持运行时新增 `peace`、`reversi`、`minesweeper`、`chess`
 - 新增游戏后不自动切换
 - 支持裸数字、`switch N`、`s N` 切换游戏
 - 切换后保留每个 session 的状态
 - 已结束游戏仍可查看，但不可继续执行局内操作
-- 保持左 / 中 / 右相对布局
-- 保留 Lab 3 的 `peace` 和 `reversi` 行为
-- 新增完整 Lab 4 基础扫雷规则：
-  - 8 x 8 棋盘
-  - 10 个地雷
-  - 首次实际翻开时生成地雷
-  - 首开安全
-  - 单格翻开，不实现 0 区域连锁自动展开
-  - 插旗 / 取消旗
-  - 胜负判定
+- 保持左 / 中 / 右相对布局，并显示当前模式 Commands
+- 新增 `chess` 国际象棋模式：
+  - 基本棋子行棋
+  - 吃子
+  - 王车易位
+  - 吃过路兵
+  - 兵升变
+  - 吃掉王即结束
+- 新增 demo 模式，自动演示各游戏
+- 采用插件式结构，各游戏通过统一 `GamePlugin` 接口接入游戏大厅
 
 ## 运行方式
 
@@ -62,29 +69,38 @@ Lab 4 代码实现已完成，位于 `lab4/`。
 - JDK 17
 - Maven
 
-运行 Lab 4：
+运行 Lab 5：
 
 ```bash
-cd lab4
+cd lab5
 mvn clean compile exec:java
 ```
 
 仅编译检查：
 
 ```bash
-cd lab4
+cd lab5
 mvn -q -DskipTests compile
 ```
 
-## Lab 4 输入说明
+直接进入 demo 模式：
+
+```bash
+cd lab5
+mvn clean compile exec:java -Dexec.args=demo
+```
+
+## Lab 5 输入说明
 
 通用命令：
 
 - `quit`：退出整个程序
+- `demo`：启动自动演示
 - `peace`：新增一局 peace
 - `reversi`：新增一局 reversi
 - `minesweeper`：新增一局 minesweeper
-- `2`、`3`、`switch 2`、`s 2`：切换游戏
+- `chess`：新增一局 chess
+- `2`、`3`、`4`、`switch 2`、`s 2`：切换游戏
 
 `peace` / `reversi`：
 
@@ -96,13 +112,11 @@ mvn -q -DskipTests compile
 - `1a`、`a1`、`8h`、`h8`：翻开一个格子
 - `f 1a`、`flag a1`：插旗 / 取消旗
 
-扫雷显示：
+`chess`：
 
-- `#`：未翻开
-- `F`：插旗
-- `*`：地雷，游戏结束后显示
-- `1-8`：周围 8 格地雷数量
-- `.`：周围地雷数为 0
+- `m 7a 5a`、`move 7a 5a`：移动棋子
+- 兵升变可附加 `q`、`r`、`b`、`n`，未指定时默认升变为后
+- 不实现和棋规则
 
 ## 文件管理约定
 

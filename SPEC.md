@@ -14,8 +14,9 @@ The repository is organized by lab stages:
 - `lab1/` = completed Lab 1 snapshot
 - `lab2/` = Lab 2 snapshot / reference implementation
 - `lab3/` = Lab 3 snapshot / reference implementation
-- `lab4/` = active Lab 4 development project; code implementation completed and ready for report / submission preparation
-- future labs should continue as `lab5/`, `lab6/`, etc.
+- `lab4/` = completed Lab 4 snapshot / reference implementation
+- `lab5/` = completed Lab 5 project; code, report, and submission preparation are complete
+- future labs should continue as `lab6/`, `lab7/`, etc.
 
 ---
 
@@ -25,7 +26,8 @@ The repository is organized by lab stages:
 - `lab1/`: completed Lab 1 project, should be treated as archived unless explicitly requested
 - `lab2/`: previous-stage Lab 2 snapshot and reference implementation
 - `lab3/`: previous-stage Lab 3 snapshot and reference implementation
-- `lab4/`: active Lab 4 development project
+- `lab4/`: completed Lab 4 snapshot and reference implementation
+- `lab5/`: completed Lab 5 project and latest finished lab snapshot
 - `_private/`: personal files, logs, reports, submission archives; must never be modified or included in code changes
 - `README.md`: repository overview
 - `SPEC.md`: global project specification
@@ -56,7 +58,8 @@ For example:
 - `lab1/` should remain a stable completed version
 - `lab2/` should remain preserved once `lab3/` becomes the active target
 - `lab3/` should remain preserved once `lab4/` becomes the active target
-- `lab4/` may evolve from `lab3/`, but should live independently in `lab4/`
+- `lab4/` should remain preserved once `lab5/` becomes the active target
+- later labs should live independently in their own directories such as `lab6/`
 
 ### 3.3 Minimal safe changes
 When modifying code:
@@ -162,12 +165,12 @@ Lab 3 core requirements include:
 - keep the structure reasonably extensible for future new game types, but avoid overengineering beyond Lab 3 needs
 
 ## Lab 4
-Lab 4 is the current active development target unless otherwise specified.
+Lab 4 is now a previous-stage snapshot and reference implementation.
 
 Lab 4 code implementation is complete as of the current repository state.
 Further Lab 4 work should normally be limited to bug fixes, documentation, report support, submission packaging, or user-requested refinements.
 
-Lab 4 must be implemented inside `lab4/` as an evolution of Lab 3's multi-game platform, while preserving `lab1/`, `lab2/`, and `lab3/` as historical snapshots.
+Lab 4 was implemented inside `lab4/` as an evolution of Lab 3's multi-game platform, while preserving `lab1/`, `lab2/`, and `lab3/` as historical snapshots.
 
 Lab 4 core requirements include:
 - keep `peace` and `reversi` behavior from Lab 3 without regression
@@ -209,16 +212,56 @@ Lab 4 implementation status:
 - Maven compile verification has passed
 - manual interaction testing reported no known bugs
 
+## Lab 5
+Lab 5 is the latest completed lab project.
+
+Lab 5 was implemented inside `lab5/` as an independent Maven project based on Lab 4, while preserving `lab1/`, `lab2/`, `lab3/`, and `lab4/` as historical snapshots.
+
+Lab 5 core requirements include:
+- keep `peace`, `reversi`, and `minesweeper` behavior from Lab 4 without regression
+- add a new `chess` mode
+- initialize exactly 4 games at startup:
+  - Game 1 = `peace`
+  - Game 2 = `reversi`
+  - Game 3 = `minesweeper`
+  - Game 4 = `chess`
+- enter Game 1 by default on startup
+- support dynamically adding `peace`, `reversi`, `minesweeper`, and `chess`
+- adding a game must not automatically switch to it
+- support switching games by bare game number, `switch N`, and `s N`
+- preserve each session's state while switching
+- allow finished games to remain viewable, but reject further in-game operations on them
+- keep the left / center / right relative layout
+- show mode-specific Commands prompts
+- implement chess movement rules, including castling, en passant, pawn promotion, and king-capture ending
+- do not implement chess draw rules unless a later lab explicitly requires them
+- add a demo mode that automatically demonstrates all game modes
+- use a plugin-style structure where each game is wrapped by a `GamePlugin` and registered through `GameRegistry`
+
+Lab 5 implementation status:
+- independent Maven project exists in `lab5/`
+- startup initializes `peace`, `reversi`, `minesweeper`, and `chess`
+- dynamic game creation and switching are implemented
+- chess core rules and special moves are implemented according to the Lab 5 PDF scope
+- demo mode is implemented
+- Maven compile verification has passed
+- manual acceptance testing was completed by the user
+- experiment report and packaging have been completed by the user
+
 ---
 
 ## 6. File Modification Policy
 
 ### Allowed to modify
-Usually safe to modify:
-- `lab4/src/main/java/**`
-- `lab4/pom.xml`
-- `lab4/README.md`
-- `lab4/SPEC_lab4.md`
+There is no active development lab after Lab 5 completion unless the user explicitly names one.
+
+Usually safe to modify for Lab 5 maintenance only when explicitly requested:
+- `lab5/src/main/java/**`
+- `lab5/pom.xml`
+- `lab5/README.md`
+- `lab5/SPEC_lab5.md`
+
+For future lab development, create a new independent directory such as `lab6/` instead of modifying completed lab snapshots.
 
 ### Modify with caution
 - package names
@@ -230,6 +273,7 @@ Usually safe to modify:
 - `lab1/**`
 - `lab2/**` except when explicitly requested or when making clearly justified minimal reference checks
 - `lab3/**` except when explicitly requested or when making clearly justified minimal reference checks
+- `lab4/**` except when explicitly requested or when making clearly justified minimal reference checks
 - `_private/**`
 - generated build outputs
 - submission archives
@@ -256,6 +300,8 @@ For later labs, prefer separation like:
 - `MinesweeperCell` or equivalent = hidden/open/flagged/mine/neighbor-count state
 - mode-specific command handling = parse commands that only apply to one mode
 - game/session factory = creates `peace`, `reversi`, and `minesweeper` sessions consistently
+- plugin registry / game plugin interface = connects each game module to the lobby through a common contract
+- chess board / piece / rule objects = keep chess-specific state and movement rules out of the generic UI or manager
 
 Do not hardcode game1/game2/game3 as separate logic branches.
 Prefer list-based or collection-based management for extensibility.
@@ -287,13 +333,16 @@ When implementing features, verify:
 - `pass` logic works correctly
 - dynamic game addition works correctly
 - end-of-game behavior matches the active lab PDF
-- Lab 4 startup has exactly 3 games: `peace`, `reversi`, and `minesweeper`
+- Lab 5 startup has exactly 4 games: `peace`, `reversi`, `minesweeper`, and `chess`
 - `minesweeper` uses an 8 x 8 board with 10 mines
 - `minesweeper` first open is safe
 - `minesweeper` flag toggle works
 - `minesweeper` win and loss detection work
 - finished games remain viewable but not operable
 - `peace` and `reversi` behavior does not regress from Lab 3
+- `chess` movement, special moves, and king-capture ending match the Lab 5 PDF
+- demo mode can run and demonstrate all Lab 5 game modes
+- plugin-style game registration remains explainable in the report
 
 ---
 
@@ -311,10 +360,10 @@ Changes should make it easy to explain:
 ## 11. Default Working Rule for Codex CLI
 
 Unless the user explicitly says otherwise:
-- treat `lab4/` as the active working directory
-- read this `SPEC.md` first, then `lab4/SPEC_lab4.md`, then `lab4/LAB4.pdf` if present; otherwise locate the Lab 4 PDF in the repository
-- preserve `lab1/`, `lab2/`, and `lab3/`
-- treat `lab3/` as a previous-stage reference rather than the main modification target
+- there is no active working lab after Lab 5 completion
+- for Lab 5 maintenance, read this `SPEC.md` first, then `lab5/SPEC_lab5.md`, then `lab5/LAB5.pdf`; modify only `lab5/`
+- for future Lab 6 work, create and use an independent `lab6/` directory, and treat `lab1/` through `lab5/` as historical snapshots
+- preserve `lab1/`, `lab2/`, `lab3/`, `lab4/`, and completed `lab5/` unless the user explicitly requests changes there
 - do not touch `_private/`
 - make incremental, reviewable changes
-- align all implementations with the Lab 4 PDF
+- align all implementations with the active lab PDF
